@@ -48,16 +48,17 @@
           "editor.defaultFormatter": "esbenp.prettier-vscode",
           "editor.formatOnSave": true
         },
+        "clangd.arguments": [],
         "cmake.buildDirectory": "${workspaceFolder}/build",
         "cmake.configureSettings": {
           "CMAKE_CXX_COMPILER": "/opt/llvm/bin/clang++",
           "CMAKE_CXX_EXTENSIONS": "OFF",
-          "CMAKE_CXX_FLAGS": "-fuse-ld=lld -stdlib=libc++",
+          "CMAKE_CXX_FLAGS": "-fuse-ld=lld -stdlib=libc++ -Wswitch-enum",
           "CMAKE_CXX_STANDARD": "17",
           "CMAKE_CXX_STANDARD_REQUIRED": "ON",
           "CMAKE_C_COMPILER": "/opt/llvm/bin/clang",
           "CMAKE_C_EXTENSIONS": "OFF",
-          "CMAKE_C_FLAGS": "-fuse-ld=lld -stdlib=libc++",
+          "CMAKE_C_FLAGS": "-fuse-ld=lld -stdlib=libc++ -Wswitch-enum",
           "CMAKE_C_STANDARD": "11",
           "CMAKE_C_STANDARD_REQUIRED": "ON"
         },
