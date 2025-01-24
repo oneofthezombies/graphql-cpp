@@ -1,0 +1,12 @@
+{
+  "enabledFileTypes": {
+    "typescript": true,
+    "cc": true,
+    "h": true
+  },
+  "ignorePaths": [
+    ".devcontainer/devcontainer.json",
+    ".devcontainer/Dockerfile"
+  ],
+  "words": ["gitmoji"]
+}

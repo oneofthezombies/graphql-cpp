@@ -1,1 +1,1 @@
-# graphql-cpp
+# GraphQL C++
