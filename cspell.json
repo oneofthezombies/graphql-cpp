@@ -8,5 +8,5 @@
     ".devcontainer/devcontainer.json",
     ".devcontainer/Dockerfile"
   ],
-  "words": ["gitmoji"]
+  "words": ["gitmoji", "lldb", "graphqlcpp", "googletest", "gtest", "ctest"]
 }

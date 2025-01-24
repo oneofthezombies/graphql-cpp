@@ -6,12 +6,25 @@
         "esbenp.prettier-vscode",
         "GraphQL.vscode-graphql-syntax",
         "ms-azuretools.vscode-docker",
-        "ms-vscode.cpptools",
         "streetsidesoftware.code-spell-checker",
         "Thinker.sort-json",
-        "usernamehw.errorlens"
+        "usernamehw.errorlens",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools"
       ],
       "settings": {
+        "[cmake]": {
+          "editor.defaultFormatter": "ms-vscode.cmake-tools",
+          "editor.formatOnSave": true
+        },
+        "[cpp]": {
+          "editor.defaultFormatter": "ms-vscode.cpptools",
+          "editor.formatOnSave": true
+        },
+        "[dockerfile]": {
+          "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+          "editor.formatOnSave": true
+        },
         "[json]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode",
           "editor.formatOnSave": true
@@ -32,7 +45,40 @@
           "editor.defaultFormatter": "esbenp.prettier-vscode",
           "editor.formatOnSave": true
         },
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.configureSettings": {
+          "CMAKE_CXX_COMPILER": "/opt/llvm/bin/clang++",
+          "CMAKE_CXX_EXTENSIONS": "OFF",
+          "CMAKE_CXX_FLAGS": "-fuse-ld=lld -stdlib=libc++",
+          "CMAKE_CXX_STANDARD": "17",
+          "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+          "CMAKE_C_COMPILER": "/opt/llvm/bin/clang",
+          "CMAKE_C_EXTENSIONS": "OFF",
+          "CMAKE_C_FLAGS": "-fuse-ld=lld -stdlib=libc++",
+          "CMAKE_C_STANDARD": "11",
+          "CMAKE_C_STANDARD_REQUIRED": "ON"
+        },
+        "cmake.enableAutomaticKitScan": false,
+        "cmake.options.advanced": {
+          "cpack": {
+            "statusBarVisibility": "hidden"
+          },
+          "kit": {
+            "statusBarVisibility": "hidden"
+          },
+          "launch": {
+            "statusBarVisibility": "hidden"
+          },
+          "workflow": {
+            "statusBarVisibility": "hidden"
+          }
+        },
+        "cmake.options.statusBarVisibility": "icon",
         "editor.rulers": [80],
+        "files.associations": {
+          "*.cc": "cpp",
+          "*.h": "cpp"
+        },
         "files.eol": "\n",
         "terminal.integrated.defaultProfile.linux": "bash",
         "typescript.inlayHints.enumMemberValues.enabled": true,
