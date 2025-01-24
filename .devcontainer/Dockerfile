@@ -23,6 +23,8 @@ RUN apt update && \
     lld-18 \
     libc++-18-dev \
     libc++abi-18-dev \
+    # For cmake-format
+    pipx \
     && apt clean && \
     rm -rf "/var/lib/apt/lists/*" && \
     ln -s "/usr/lib/llvm-18" "/opt/llvm"
@@ -56,6 +58,12 @@ RUN echo '# JavaScript' >> ~/.bashrc && \
     gitmoji-cli@9.5.0 \
     tsx@4.19.2 \
     && echo '' >> ~/.bashrc
+
+RUN pipx ensurepath && \
+    source ~/.bashrc && \
+    pipx install \
+    # cmake-format
+    cmakelang==0.6.13
 
 RUN echo '# Aliases' >> ~/.bashrc && \
     echo 'alias ll="ls -a -p -lh"' >> ~/.bashrc && \

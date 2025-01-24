@@ -63,4 +63,8 @@ node_modules/
 # GraphQL C++
 ################################################################################
 
+# CMake build
 /build/
+
+# clangd cache
+/.cache/

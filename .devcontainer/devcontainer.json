@@ -10,15 +10,18 @@
         "Thinker.sort-json",
         "usernamehw.errorlens",
         "ms-vscode.cmake-tools",
-        "ms-vscode.cpptools"
+        "llvm-vs-code-extensions.vscode-clangd",
+        "llvm-vs-code-extensions.lldb-dap",
+        "twxs.cmake",
+        "cheshirekow.cmake-format"
       ],
       "settings": {
         "[cmake]": {
-          "editor.defaultFormatter": "ms-vscode.cmake-tools",
+          "editor.defaultFormatter": "cheshirekow.cmake-format",
           "editor.formatOnSave": true
         },
         "[cpp]": {
-          "editor.defaultFormatter": "ms-vscode.cpptools",
+          "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
           "editor.formatOnSave": true
         },
         "[dockerfile]": {
@@ -80,6 +83,7 @@
           "*.h": "cpp"
         },
         "files.eol": "\n",
+        "lldb-dap.executable-path": "/opt/llvm/bin/lldb-dap",
         "terminal.integrated.defaultProfile.linux": "bash",
         "typescript.inlayHints.enumMemberValues.enabled": true,
         "typescript.inlayHints.functionLikeReturnTypes.enabled": true,

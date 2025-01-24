@@ -8,5 +8,13 @@
     ".devcontainer/devcontainer.json",
     ".devcontainer/Dockerfile"
   ],
-  "words": ["gitmoji", "lldb", "graphqlcpp", "googletest", "gtest", "ctest"]
+  "words": [
+    "gitmoji",
+    "lldb",
+    "graphqlcpp",
+    "googletest",
+    "gtest",
+    "ctest",
+    "clangd"
+  ]
 }
