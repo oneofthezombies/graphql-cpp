@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20.6)
 project(graphqlcpp)
 
-add_library(graphqlcpp src/utf8_decoder.cc src/source_text.cc)
+add_library(graphqlcpp src/graphql_cpp/utf8_stream.cc src/graphql_cpp/lexer.cc)
+target_include_directories(graphqlcpp PUBLIC src)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -12,8 +13,10 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(graphqlcpp_test src/slice_test.cc src/utf8_decoder_test.cc
-                               src/source_text_test.cc)
+add_executable(
+  graphqlcpp_test
+  src/graphql_cpp/slice_test.cc src/graphql_cpp/utf8_stream_test.cc
+  src/graphql_cpp/lexer_test.cc)
 target_link_libraries(graphqlcpp_test graphqlcpp GTest::gtest_main)
 
 include(GoogleTest)

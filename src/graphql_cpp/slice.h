@@ -2,24 +2,21 @@
 #define GRAPHQL_CPP_SLICE_H_
 
 #include <cassert>
-#include <variant>
+#include <cstddef>
 
 namespace graphql_cpp {
 
-namespace slice {
-
-struct NullDataError {};
-
+/**
+ * A non-owning view of contiguous elements.
+ *
+ * Manages a pointer and size without owning the underlying data.
+ */
 template <typename T>
 class Slice {
  public:
-  using CreateResult = std::variant<Slice<T>, NullDataError>;
-
-  static CreateResult Create(const T* data, const std::size_t size) noexcept {
-    if (data == nullptr) {
-      return NullDataError{};
-    }
-    return Slice<T>(data, size);
+  explicit Slice(const T* data, const std::size_t size) noexcept
+      : data_(data), size_(size) {
+    assert(data != nullptr);
   }
 
   ~Slice() noexcept = default;
@@ -36,19 +33,13 @@ class Slice {
   }
 
   const T* data() const noexcept { return data_; }
-
   bool empty() const noexcept { return size_ == 0; }
   std::size_t size() const noexcept { return size_; }
 
  private:
-  explicit Slice(const T* data, const std::size_t size) noexcept
-      : data_(data), size_(size) {}
-
   const T* data_;
   std::size_t size_;
 };
-
-}  // namespace slice
 
 }  // namespace graphql_cpp
 
