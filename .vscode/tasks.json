@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build GraphQL C++",
+      "type": "process",
+      "command": "bash",
+      "args": [
+        "-c",
+        "cmake --build /work/build --config Debug --target all -j $(nproc)"
+      ],
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Test GraphQL C++",
+      "type": "shell",
+      "command": "ctest",
+      "args": ["--test-dir", "build", "--output-on-failure"],
+      "dependsOn": ["Build GraphQL C++"],
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

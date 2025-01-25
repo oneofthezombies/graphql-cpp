@@ -10,21 +10,14 @@ namespace slice {
 
 struct NullDataError {};
 
-struct InvalidSizeError {
-  std::size_t size;
-};
-
 template <typename T>
 class Slice {
  public:
-  using CreateResult = std::variant<Slice<T>, NullDataError, InvalidSizeError>;
+  using CreateResult = std::variant<Slice<T>, NullDataError>;
 
   static CreateResult Create(const T* data, const std::size_t size) noexcept {
     if (data == nullptr) {
       return NullDataError{};
-    }
-    if (size == 0) {
-      return InvalidSizeError{.size = size};
     }
     return Slice<T>(data, size);
   }

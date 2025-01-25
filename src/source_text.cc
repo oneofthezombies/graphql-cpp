@@ -17,7 +17,7 @@ SourceText::NextSourceCharacter() noexcept {
         using T = std::decay_t<decltype(res)>;
         if constexpr (std::is_same_v<T, utf8_decoder::Eof> ||
                       std::is_same_v<T, utf8_decoder::FirstByteError> ||
-                      std::is_same_v<T, utf8_decoder::OutOfRangeError> ||
+                      std::is_same_v<T, utf8_decoder::CodePointLengthError> ||
                       std::is_same_v<T, utf8_decoder::ContinuationByteError>) {
           return res;
         } else if constexpr (std::is_same_v<T, utf8_decoder::CodePoint>) {

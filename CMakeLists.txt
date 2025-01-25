@@ -14,7 +14,7 @@ enable_testing()
 
 add_executable(graphqlcpp_test src/slice_test.cc src/utf8_decoder_test.cc
                                src/source_text_test.cc)
-target_link_libraries(graphqlcpp_test GTest::gtest_main)
+target_link_libraries(graphqlcpp_test graphqlcpp GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(graphqlcpp_test)

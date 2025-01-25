@@ -1,7 +1,6 @@
 #ifndef GRAPHQL_CPP_UTF8_DECODER_H_
 #define GRAPHQL_CPP_UTF8_DECODER_H_
 
-#include <optional>
 #include <variant>
 
 #include "slice.h"
@@ -9,10 +8,6 @@
 namespace graphql_cpp {
 
 namespace utf8_decoder {
-
-// Reference: https://en.wikipedia.org/wiki/UTF-8
-std::optional<std::size_t> Utf8BytesLength(
-    const std::uint8_t first_byte) noexcept;
 
 struct Eof {};
 
@@ -22,22 +17,24 @@ struct CodePoint {
 
 struct FirstByteError {
   std::size_t position;
+  std::uint8_t first_byte;
 };
 
-struct OutOfRangeError {
+struct CodePointLengthError {
   std::size_t position;
-  std::size_t utf8_bytes_length;
+  std::size_t code_point_length;
   std::size_t text_length;
 };
 
 struct ContinuationByteError {
   std::size_t position;
+  std::uint8_t continuation_byte;
 };
 
 class Utf8Decoder {
  public:
   using NextCodePointResult =
-      std::variant<Eof, CodePoint, FirstByteError, OutOfRangeError,
+      std::variant<Eof, CodePoint, FirstByteError, CodePointLengthError,
                    ContinuationByteError>;
 
   explicit Utf8Decoder(const slice::Slice<std::uint8_t> text) noexcept;

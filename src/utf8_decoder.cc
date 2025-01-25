@@ -6,7 +6,7 @@ namespace graphql_cpp {
 
 namespace utf8_decoder {
 
-std::optional<std::size_t> Utf8BytesLength(
+std::optional<std::size_t> Utf8CodePointLength(
     const std::uint8_t first_byte) noexcept {
   if (0x00 <= first_byte && first_byte <= 0x7f) {
     return 1u;
@@ -30,33 +30,42 @@ Utf8Decoder::NextCodePointResult Utf8Decoder::NextCodePoint() noexcept {
   }
 
   const std::uint8_t first_byte = text_[position_];
-  const auto bytes_length_opt = Utf8BytesLength(first_byte);
-  if (!bytes_length_opt) {
-    return FirstByteError{.position = position_};
+  const auto code_point_length_opt = Utf8CodePointLength(first_byte);
+  if (!code_point_length_opt) {
+    return FirstByteError{
+        .position = position_,
+        .first_byte = first_byte,
+    };
   }
 
-  const std::size_t bytes_length = *bytes_length_opt;
-  if (position_ + bytes_length > text_.size()) {
-    return OutOfRangeError{.position = position_,
-                           .utf8_bytes_length = bytes_length,
-                           .text_length = text_.size()};
+  const std::size_t code_point_length = *code_point_length_opt;
+  if (position_ + code_point_length > text_.size()) {
+    return CodePointLengthError{
+        .position = position_,
+        .code_point_length = code_point_length,
+        .text_length = text_.size(),
+    };
   }
 
   std::uint32_t code_point = 0;
-  if (bytes_length == 1) {
+  if (code_point_length == 1) {
     code_point = text_[position_];
   } else {
-    code_point = text_[position_] & ((1 << (7 - bytes_length)) - 1);
-    for (std::size_t i = 1; i < bytes_length; ++i) {
-      if (0x80 <= text_[position_ + i] && text_[position_ + i] <= 0xbf) {
-        code_point = (code_point << 6) | (text_[position_ + i] & 0x3f);
+    code_point = text_[position_] & ((1 << (7 - code_point_length)) - 1);
+    for (std::size_t i = 1; i < code_point_length; ++i) {
+      const std::uint8_t continuation_byte = text_[position_ + i];
+      if (0x80 <= continuation_byte && continuation_byte <= 0xbf) {
+        code_point = (code_point << 6) | (continuation_byte & 0x3f);
       } else {
-        return ContinuationByteError{.position = position_ + i};
+        return ContinuationByteError{
+            .position = position_ + i,
+            .continuation_byte = continuation_byte,
+        };
       }
     }
   }
 
-  position_ += bytes_length;
+  position_ += code_point_length;
   return CodePoint{.value = code_point};
 }
 
