@@ -2,24 +2,37 @@
 #define GRAPHQL_CPP_SLICE_H_
 
 #include <cassert>
-#include <cstddef>
+#include <variant>
 
 namespace graphql_cpp {
+
+namespace slice {
+
+struct NullDataError {};
+
+struct InvalidSizeError {
+  std::size_t size;
+};
 
 template <typename T>
 class Slice {
  public:
-  explicit Slice(const T* data, const std::size_t size) noexcept
-      : data_(data), size_(size) {
-    if (size_ > 0) {
-      assert(data_ != nullptr);
+  using CreateResult = std::variant<Slice<T>, NullDataError, InvalidSizeError>;
+
+  static CreateResult Create(const T* data, const std::size_t size) noexcept {
+    if (data == nullptr) {
+      return NullDataError{};
     }
+    if (size == 0) {
+      return InvalidSizeError{.size = size};
+    }
+    return Slice<T>(data, size);
   }
 
   ~Slice() noexcept = default;
 
-  Slice(const Slice&) = default;
-  Slice& operator=(const Slice&) = default;
+  Slice(const Slice&) noexcept = default;
+  Slice& operator=(const Slice&) noexcept = default;
 
   Slice(Slice&&) noexcept = default;
   Slice& operator=(Slice&&) noexcept = default;
@@ -35,9 +48,14 @@ class Slice {
   std::size_t size() const noexcept { return size_; }
 
  private:
+  explicit Slice(const T* data, const std::size_t size) noexcept
+      : data_(data), size_(size) {}
+
   const T* data_;
   std::size_t size_;
 };
+
+}  // namespace slice
 
 }  // namespace graphql_cpp
 

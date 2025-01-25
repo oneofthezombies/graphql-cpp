@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20.6)
 project(graphqlcpp)
 
-add_library(graphqlcpp src/language.cc src/utf8_decoder.cc)
+add_library(graphqlcpp src/utf8_decoder.cc src/source_text.cc)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(graphqlcpp_test src/slice_test.cc src/utf8_decoder_test.cc
-                               src/language_test.cc)
+                               src/source_text_test.cc)
 target_link_libraries(graphqlcpp_test GTest::gtest_main)
 
 include(GoogleTest)
