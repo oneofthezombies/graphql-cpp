@@ -31,12 +31,12 @@ struct ContinuationByteError {
   std::uint8_t continuation_byte;
 };
 
+using NextCodePointResult =
+    std::variant<Eof, CodePoint, FirstByteError, CodePointLengthError,
+                 ContinuationByteError>;
+
 class Utf8Decoder {
  public:
-  using NextCodePointResult =
-      std::variant<Eof, CodePoint, FirstByteError, CodePointLengthError,
-                   ContinuationByteError>;
-
   explicit Utf8Decoder(const slice::Slice<std::uint8_t> text) noexcept;
 
   ~Utf8Decoder() noexcept = default;

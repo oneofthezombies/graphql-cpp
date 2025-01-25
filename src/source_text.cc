@@ -6,11 +6,10 @@ namespace graphql_cpp {
 
 namespace source_text {
 
-SourceText::SourceText(const slice::Slice<std::uint8_t> bytes) noexcept
-    : utf8_decoder_(bytes) {}
+SourceText::SourceText(const slice::Slice<std::uint8_t> text) noexcept
+    : utf8_decoder_(text) {}
 
-SourceText::NextSourceCharacterResult
-SourceText::NextSourceCharacter() noexcept {
+NextSourceCharacterResult SourceText::NextSourceCharacter() noexcept {
   auto res = utf8_decoder_.NextCodePoint();
   return std::visit(
       [](auto&& res) -> NextSourceCharacterResult {

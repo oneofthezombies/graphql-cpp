@@ -24,7 +24,7 @@ std::optional<std::size_t> Utf8CodePointLength(
 Utf8Decoder::Utf8Decoder(const slice::Slice<std::uint8_t> text) noexcept
     : text_(text) {}
 
-Utf8Decoder::NextCodePointResult Utf8Decoder::NextCodePoint() noexcept {
+NextCodePointResult Utf8Decoder::NextCodePoint() noexcept {
   if (position_ >= text_.size()) {
     return Eof{};
   }

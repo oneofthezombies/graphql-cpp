@@ -23,14 +23,13 @@ struct NonSourceCharacter {
 using FirstByteError = utf8_decoder::FirstByteError;
 using CodePointLengthError = utf8_decoder::CodePointLengthError;
 using ContinuationByteError = utf8_decoder::ContinuationByteError;
+using NextSourceCharacterResult =
+    std::variant<Eof, SourceCharacter, NonSourceCharacter, FirstByteError,
+                 CodePointLengthError, ContinuationByteError>;
 
 class SourceText {
  public:
-  using NextSourceCharacterResult =
-      std::variant<Eof, SourceCharacter, NonSourceCharacter, FirstByteError,
-                   CodePointLengthError, ContinuationByteError>;
-
-  explicit SourceText(const slice::Slice<std::uint8_t> bytes) noexcept;
+  explicit SourceText(const slice::Slice<std::uint8_t> text) noexcept;
 
   ~SourceText() noexcept = default;
 
