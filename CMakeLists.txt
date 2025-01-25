@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20.6)
 project(graphqlcpp)
 
-add_library(graphqlcpp src/graphql_cpp/utf8_stream.cc src/graphql_cpp/lexer.cc)
+add_library(src/graphql_cpp/utf8_stream.cc src/graphql_cpp/lexer.cc)
 target_include_directories(graphqlcpp PUBLIC src)
 
 include(FetchContent)

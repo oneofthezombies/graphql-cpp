@@ -4,7 +4,8 @@
 #include <istream>
 #include <memory>
 
-#include "graphql_cpp/utils.h"
+#include "graphql_cpp/result.h"
+#include "graphql_cpp/slice.h"
 
 namespace graphql_cpp {
 
@@ -34,12 +35,6 @@ struct Utf8ContinuationByteError {
   std::size_t position;
   std::uint8_t continuation_byte;
 };
-
-std::optional<std::size_t> Utf8CodePointLength(
-    std::uint8_t first_byte) noexcept;
-std::optional<std::uint32_t> Utf8CodePoint(std::uint8_t* bytes,
-                                           std::size_t length) noexcept;
-bool IsUtf8ContinuationByte(std::uint8_t byte) noexcept;
 
 class Utf8Stream {
  public:
