@@ -6,15 +6,17 @@ AnyError::AnyError(std::int32_t code, std::unique_ptr<AnyError> cause,
                    std::source_location location) noexcept
     : code{code}, cause{std::move(cause)}, location{location} {}
 
-AnyError::AnyError(std::string_view message, std::unique_ptr<AnyError> cause,
+AnyError::AnyError(std::string message, std::unique_ptr<AnyError> cause,
                    std::source_location location) noexcept
-    : message{message}, cause{std::move(cause)}, location{location} {}
+    : message{std::move(message)},
+      cause{std::move(cause)},
+      location{location} {}
 
-AnyError::AnyError(std::int32_t code, std::string_view message,
+AnyError::AnyError(std::int32_t code, std::string message,
                    std::unique_ptr<AnyError> cause,
                    std::source_location location) noexcept
     : code{code},
-      message{message},
+      message{std::move(message)},
       cause{std::move(cause)},
       location{location} {}
 

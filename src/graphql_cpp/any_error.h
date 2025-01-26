@@ -22,10 +22,10 @@ struct AnyError {
       std::int32_t code, std::unique_ptr<AnyError> cause = nullptr,
       std::source_location location = std::source_location::current()) noexcept;
   AnyError(
-      std::string_view message, std::unique_ptr<AnyError> cause = nullptr,
+      std::string message, std::unique_ptr<AnyError> cause = nullptr,
       std::source_location location = std::source_location::current()) noexcept;
   AnyError(
-      std::int32_t code, std::string_view message,
+      std::int32_t code, std::string message,
       std::unique_ptr<AnyError> cause = nullptr,
       std::source_location location = std::source_location::current()) noexcept;
 
@@ -37,9 +37,9 @@ struct AnyError {
   AnyError(AnyError&& other) noexcept = default;
   AnyError& operator=(AnyError&& other) noexcept = default;
 
-  std::unique_ptr<AnyError> into_unique() noexcept;
+  [[nodiscard]] std::unique_ptr<AnyError> into_unique() noexcept;
 
-  operator std::unique_ptr<AnyError>() noexcept;
+  [[nodiscard]] operator std::unique_ptr<AnyError>() noexcept;
 };
 
 }  // namespace graphql_cpp
