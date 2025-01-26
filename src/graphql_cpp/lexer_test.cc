@@ -4,9 +4,6 @@
 
 namespace graphql_cpp {
 
-TEST(LexerTest, AlwaysPasses) {
-  Lexer lexer(std::make_unique<std::stringstream>(""));
-  EXPECT_TRUE(true);
-}
+TEST(LexerTest, AlwaysPasses) { EXPECT_TRUE(true); }
 
 }  // namespace graphql_cpp

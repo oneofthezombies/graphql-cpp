@@ -13,6 +13,14 @@ struct Utf8StreamReader {
 
   explicit Utf8StreamReader(std::istream& stream) noexcept;
 
+  ~Utf8StreamReader() noexcept = default;
+
+  Utf8StreamReader(const Utf8StreamReader&) = delete;
+  Utf8StreamReader& operator=(const Utf8StreamReader&) = delete;
+
+  Utf8StreamReader(Utf8StreamReader&&) = delete;
+  Utf8StreamReader& operator=(Utf8StreamReader&&) = delete;
+
   [[nodiscard]] ReadResult read() noexcept;
 
  private:
