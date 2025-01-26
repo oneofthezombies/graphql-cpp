@@ -13,7 +13,8 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(graphqlcpp_test src/graphql_cpp/any_error_test.cc)
+add_executable(graphqlcpp_test src/graphql_cpp/any_error_test.cc
+                               src/graphql_cpp/result_test.cc)
 target_link_libraries(graphqlcpp_test graphqlcpp GTest::gtest_main
                       GTest::gmock_main)
 
