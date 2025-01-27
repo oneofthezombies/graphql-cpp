@@ -268,6 +268,7 @@ TEST(Utf8DecodeReaderStringStream, Bytes2CodePointExample) {
   EXPECT_TRUE(IsOk(result));
   auto&& code_point = Unwrap(std::move(result));
   EXPECT_TRUE(code_point);
+  EXPECT_EQ(*code_point, 0x00a1);
   auto&& eof_result = reader.Read();
   EXPECT_TRUE(IsOk(eof_result));
   EXPECT_FALSE(Unwrap(std::move(eof_result)));
@@ -280,6 +281,7 @@ TEST(Utf8DecodeReaderStringStream, Bytes3CodePointExample) {
   EXPECT_TRUE(IsOk(result));
   auto&& code_point = Unwrap(std::move(result));
   EXPECT_TRUE(code_point);
+  EXPECT_EQ(*code_point, 0xac00);
   auto&& eof_result = reader.Read();
   EXPECT_TRUE(IsOk(eof_result));
   EXPECT_FALSE(Unwrap(std::move(eof_result)));
@@ -292,6 +294,7 @@ TEST(Utf8DecodeReaderStringStream, Bytes4CodePointExample) {
   EXPECT_TRUE(IsOk(result));
   auto&& code_point = Unwrap(std::move(result));
   EXPECT_TRUE(code_point);
+  EXPECT_EQ(*code_point, 0x1f30d);
   auto&& eof_result = reader.Read();
   EXPECT_TRUE(IsOk(eof_result));
   EXPECT_FALSE(Unwrap(std::move(eof_result)));
