@@ -59,15 +59,12 @@ class ErrorBase {
 
     template <typename Value>
     Builder& Detail(std::string_view key, Value&& value) noexcept {
-      CheckDuplicateDetailKey(key);
       return Detail(std::string(key), std::forward<Value>(value));
     }
 
     template <>
     Builder& Detail(std::string_view key, std::string&& value) noexcept {
-      CheckDuplicateDetailKey(key);
-      details_.emplace(std::string(key), std::move(value));
-      return *this;
+      return Detail(std::string(key), std::move(value));
     }
 
     Builder& Cause(std::unique_ptr<SelfType> cause) noexcept {
