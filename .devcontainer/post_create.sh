@@ -10,6 +10,7 @@ lldb --version
 [[ "$(which lld)" == "/opt/llvm/bin/lld" ]] || exit 1
 cmake --version
 ctest --version
+ninja --version
 
 # Check JavaScript
 volta --version

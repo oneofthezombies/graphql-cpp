@@ -25,6 +25,8 @@ RUN apt update && \
     libc++abi-18-dev \
     # For cmake-format
     pipx \
+    # For ninja
+    ninja-build \
     && apt clean && \
     rm -rf "/var/lib/apt/lists/*" && \
     ln -s "/usr/lib/llvm-18" "/opt/llvm"

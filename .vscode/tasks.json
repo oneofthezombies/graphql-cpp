@@ -14,7 +14,11 @@
     {
       "label": "Test GraphQL C++",
       "type": "process",
-      "command": "./build/graphqlcpp_test",
+      "command": "bash",
+      "args": [
+        "-c",
+        "ctest --test-dir /work/build --output-on-failure -j $(nproc)"
+      ],
       "dependsOn": ["Build GraphQL C++"],
       "problemMatcher": ["$gcc"]
     }

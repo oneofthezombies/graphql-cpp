@@ -63,6 +63,7 @@
           "CMAKE_C_STANDARD_REQUIRED": "ON"
         },
         "cmake.enableAutomaticKitScan": false,
+        "cmake.generator": "Ninja",
         "cmake.options.statusBarVisibility": "hidden",
         "editor.rulers": [80],
         "files.associations": {
