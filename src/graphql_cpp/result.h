@@ -10,112 +10,110 @@ template <typename T, typename E>
 using Result = std::variant<T, E>;
 
 template <typename T, typename E>
-[[nodiscard]] constexpr Result<T, E> ok(const T& value) noexcept {
-  return Result<T, E>{std::in_place_index<0>, value};
+[[nodiscard]] constexpr Result<T, E> Ok(const T& v) noexcept {
+  return Result<T, E>{std::in_place_index<0>, v};
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr Result<T, E> ok(T&& value) noexcept {
-  return Result<T, E>{std::in_place_index<0>, std::move(value)};
+[[nodiscard]] constexpr Result<T, E> Ok(T&& v) noexcept {
+  return Result<T, E>{std::in_place_index<0>, std::move(v)};
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr Result<T, E> err(const E& error) noexcept {
-  return Result<T, E>{std::in_place_index<1>, error};
+[[nodiscard]] constexpr Result<T, E> Err(const E& e) noexcept {
+  return Result<T, E>{std::in_place_index<1>, e};
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr Result<T, E> err(E&& error) noexcept {
-  return Result<T, E>{std::in_place_index<1>, std::move(error)};
+[[nodiscard]] constexpr Result<T, E> Err(E&& e) noexcept {
+  return Result<T, E>{std::in_place_index<1>, std::move(e)};
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr bool is_ok(const Result<T, E>& result) noexcept {
-  return result.index() == 0;
+[[nodiscard]] constexpr bool IsOk(const Result<T, E>& r) noexcept {
+  return r.index() == 0;
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr bool is_err(const Result<T, E>& result) noexcept {
-  return result.index() == 1;
+[[nodiscard]] constexpr bool IsErr(const Result<T, E>& r) noexcept {
+  return r.index() == 1;
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr const T& unwrap(const Result<T, E>& result) noexcept {
-  assert(is_ok(result));
-  return std::get<0>(result);
+[[nodiscard]] constexpr const T& Unwrap(const Result<T, E>& r) noexcept {
+  assert(IsOk(r));
+  return std::get<0>(r);
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr T&& unwrap(Result<T, E>&& result) noexcept {
-  assert(is_ok(result));
-  return std::get<0>(std::move(result));
+[[nodiscard]] constexpr T&& Unwrap(Result<T, E>&& r) noexcept {
+  assert(IsOk(r));
+  return std::get<0>(std::move(r));
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr const E& unwrap_err(
-    const Result<T, E>& result) noexcept {
-  assert(is_err(result));
-  return std::get<1>(result);
+[[nodiscard]] constexpr const E& UnwrapErr(const Result<T, E>& r) noexcept {
+  assert(IsErr(r));
+  return std::get<1>(r);
 }
 
 template <typename T, typename E>
-[[nodiscard]] constexpr E&& unwrap_err(Result<T, E>&& result) noexcept {
-  assert(is_err(result));
-  return std::get<1>(std::move(result));
+[[nodiscard]] constexpr E&& UnwrapErr(Result<T, E>&& r) noexcept {
+  assert(IsErr(r));
+  return std::get<1>(std::move(r));
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> map(
-    const Result<T, E>& result, F op) noexcept {
+[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> Map(
+    const Result<T, E>& r, F op) noexcept {
   using T2 = std::invoke_result_t<F, T>;
 
-  if (is_ok(result)) {
-    return Result<T2, E>{std::in_place_index<0>, op(unwrap(result))};
+  if (IsOk(r)) {
+    return Result<T2, E>{std::in_place_index<0>, op(Unwrap(r))};
   } else {
-    return Result<T2, E>{std::in_place_index<1>, unwrap_err(result)};
+    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(r)};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> map(
-    Result<T, E>&& result, F op) noexcept {
+[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> Map(
+    Result<T, E>&& r, F op) noexcept {
   using T2 = std::invoke_result_t<F, T>;
 
-  if (is_ok(result)) {
-    return Result<T2, E>{std::in_place_index<0>, op(unwrap(result))};
+  if (IsOk(r)) {
+    return Result<T2, E>{std::in_place_index<0>, op(Unwrap(std::move(r)))};
   } else {
-    return Result<T2, E>{std::in_place_index<1>, unwrap_err(result)};
+    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(std::move(r))};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> map_err(
-    const Result<T, E>& result, F op) noexcept {
+[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> MapErr(
+    const Result<T, E>& r, F op) noexcept {
   using E2 = std::invoke_result_t<F, E>;
 
-  if (is_err(result)) {
-    return Result<T, E2>{std::in_place_index<1>,
-                         op(std::move(unwrap_err(result)))};
+  if (IsErr(r)) {
+    return Result<T, E2>{std::in_place_index<1>, op(std::move(UnwrapErr(r)))};
   } else {
-    return Result<T, E2>{std::in_place_index<0>, unwrap(result)};
+    return Result<T, E2>{std::in_place_index<0>, Unwrap(r)};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> map_err(
-    Result<T, E>&& result, F op) noexcept {
+[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> MapErr(
+    Result<T, E>&& r, F op) noexcept {
   using E2 = std::invoke_result_t<F, E>;
 
-  if (is_err(result)) {
-    return Result<T, E2>{std::in_place_index<1>, op(unwrap_err(result))};
+  if (IsErr(r)) {
+    return Result<T, E2>{std::in_place_index<1>, op(UnwrapErr(std::move(r)))};
   } else {
-    return Result<T, E2>{std::in_place_index<0>, unwrap(result)};
+    return Result<T, E2>{std::in_place_index<0>, Unwrap(std::move(r))};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, T> and_then(
-    const Result<T, E>& result, F op) noexcept {
+[[nodiscard]] constexpr std::invoke_result_t<F, T> AndThen(
+    const Result<T, E>& r, F op) noexcept {
   using R = std::invoke_result_t<F, T>;
 
   static_assert(std::variant_size_v<R> == 2,
@@ -124,16 +122,16 @@ template <typename T, typename E, typename F>
       std::is_same_v<std::variant_alternative_t<1, R>, E>,
       "Second type of return type must be the same as the error type");
 
-  if (is_ok(result)) {
-    return op(unwrap(result));
+  if (IsOk(r)) {
+    return op(Unwrap(r));
   } else {
-    return R{std::in_place_index<1>, unwrap_err(result)};
+    return R{std::in_place_index<1>, UnwrapErr(r)};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, T> and_then(
-    Result<T, E>&& result, F op) noexcept {
+[[nodiscard]] constexpr std::invoke_result_t<F, T> AndThen(Result<T, E>&& r,
+                                                           F op) noexcept {
   using R = std::invoke_result_t<F, T>;
 
   static_assert(std::variant_size_v<R> == 2,
@@ -142,16 +140,16 @@ template <typename T, typename E, typename F>
       std::is_same_v<std::variant_alternative_t<1, R>, E>,
       "Second type of return type must be the same as the error type");
 
-  if (is_ok(result)) {
-    return op(unwrap(result));
+  if (IsOk(r)) {
+    return op(Unwrap(std::move(r)));
   } else {
-    return R{std::in_place_index<1>, unwrap_err(result)};
+    return R{std::in_place_index<1>, UnwrapErr(std::move(r))};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, E> or_else(
-    const Result<T, E>& result, F op) noexcept {
+[[nodiscard]] constexpr std::invoke_result_t<F, E> OrElse(const Result<T, E>& r,
+                                                          F op) noexcept {
   using R = std::invoke_result_t<F, E>;
 
   static_assert(std::variant_size_v<R> == 2,
@@ -159,16 +157,16 @@ template <typename T, typename E, typename F>
   static_assert(std::is_same_v<std::variant_alternative_t<0, R>, T>,
                 "First type of return type must be the same as the value type");
 
-  if (is_err(result)) {
-    return op(unwrap_err(result));
+  if (IsErr(r)) {
+    return op(UnwrapErr(r));
   } else {
-    return R{std::in_place_index<0>, unwrap(result)};
+    return R{std::in_place_index<0>, Unwrap(r)};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, E> or_else(
-    Result<T, E>&& result, F op) noexcept {
+[[nodiscard]] constexpr std::invoke_result_t<F, E> OrElse(Result<T, E>&& r,
+                                                          F op) noexcept {
   using R = std::invoke_result_t<F, E>;
 
   static_assert(std::variant_size_v<R> == 2,
@@ -176,10 +174,10 @@ template <typename T, typename E, typename F>
   static_assert(std::is_same_v<std::variant_alternative_t<0, R>, T>,
                 "First type of return type must be the same as the value type");
 
-  if (is_err(result)) {
-    return op(unwrap_err(result));
+  if (IsErr(r)) {
+    return op(UnwrapErr(std::move(r)));
   } else {
-    return R{std::in_place_index<0>, unwrap(result)};
+    return R{std::in_place_index<0>, Unwrap(std::move(r))};
   }
 }
 
