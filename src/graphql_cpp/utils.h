@@ -32,10 +32,22 @@ struct Visitor : Handlers... {
 template <typename... Handlers>
 Visitor(Handlers...) -> Visitor<Handlers...>;
 
+template <typename Variant, typename Visitor>
+constexpr bool IsExhaustiveVisitor() {
+  return ([]<std::size_t... I>(std::index_sequence<I...>, Visitor&& visitor) {
+    return (
+        std::is_invocable_v<Visitor, std::variant_alternative_t<I, Variant>> &&
+        ...);
+  })(std::make_index_sequence<std::variant_size_v<Variant>>{},
+     std::forward<Visitor>(Visitor{}));
+}
+
 template <typename Variant, typename... Handlers>
-constexpr decltype(auto) Visit(Variant&& variant, Handlers&&... handlers) {
-  return std::visit(Visitor<Handlers...>{std::forward<Handlers>(handlers)...},
-                    std::forward<Variant>(variant));
+auto MakeVisitor(Handlers&&... handlers) {
+  auto visitor = Visitor{std::forward<Handlers>(handlers)...};
+  static_assert(IsExhaustiveVisitor<Variant, decltype(visitor)>(),
+                "Visitor does not handle all alternatives in the variant!");
+  return visitor;
 }
 
 }  // namespace graphql_cpp
