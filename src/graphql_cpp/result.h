@@ -9,6 +9,32 @@ namespace graphql_cpp {
 template <typename T, typename E>
 using Result = std::variant<T, E>;
 
+namespace detail {
+
+template <typename T2, typename E, typename R, typename F>
+[[nodiscard]] constexpr auto Map(R&& r, F&& f) {
+  if (IsOk(r)) {
+    return Result<T2, E>{
+        std::in_place_index<0>,
+        std::invoke(std::forward<F>(f), Unwrap(std::forward<R>(r)))};
+  } else {
+    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(std::forward<R>(r))};
+  }
+}
+
+template <typename T, typename E2, typename R, typename F>
+[[nodiscard]] constexpr auto MapErr(R&& r, F&& f) {
+  if (IsErr(r)) {
+    return Result<T, E2>{
+        std::in_place_index<1>,
+        std::invoke(std::forward<F>(f), UnwrapErr(std::forward<R>(r)))};
+  } else {
+    return Result<T, E2>{std::in_place_index<0>, Unwrap(std::forward<R>(r))};
+  }
+}
+
+}  // namespace detail
+
 template <typename T, typename E>
 [[nodiscard]] constexpr Result<T, E> Ok(const T& v) noexcept {
   return Result<T, E>{std::in_place_index<0>, v};
@@ -64,9 +90,9 @@ template <typename T, typename E>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> Map(
-    const Result<T, E>& r, F f) noexcept {
-  using T2 = std::invoke_result_t<F, T>;
+  requires std::invocable<F, const T&>
+[[nodiscard]] constexpr auto Map(const Result<T, E>& r, F f) noexcept {
+  using T2 = std::invoke_result_t<F, const T&>;
 
   if (IsOk(r)) {
     return Result<T2, E>{std::in_place_index<0>, f(Unwrap(r))};
@@ -76,9 +102,9 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<std::invoke_result_t<F, T>, E> Map(
-    Result<T, E>&& r, F f) noexcept {
-  using T2 = std::invoke_result_t<F, T>;
+  requires std::invocable<F, T&&>
+[[nodiscard]] constexpr auto Map(Result<T, E>&& r, F f) noexcept {
+  using T2 = std::invoke_result_t<F, T&&>;
 
   if (IsOk(r)) {
     return Result<T2, E>{std::in_place_index<0>, f(Unwrap(std::move(r)))};
@@ -88,21 +114,21 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> MapErr(
-    const Result<T, E>& r, F f) noexcept {
-  using E2 = std::invoke_result_t<F, E>;
+  requires std::invocable<F, const E&>
+[[nodiscard]] constexpr auto MapErr(const Result<T, E>& r, F f) noexcept {
+  using E2 = std::invoke_result_t<F, const E&>;
 
   if (IsErr(r)) {
-    return Result<T, E2>{std::in_place_index<1>, f(std::move(UnwrapErr(r)))};
+    return Result<T, E2>{std::in_place_index<1>, f(UnwrapErr(r))};
   } else {
     return Result<T, E2>{std::in_place_index<0>, Unwrap(r)};
   }
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr Result<T, std::invoke_result_t<F, E>> MapErr(
-    Result<T, E>&& r, F f) noexcept {
-  using E2 = std::invoke_result_t<F, E>;
+  requires std::invocable<F, E&&>
+[[nodiscard]] constexpr auto MapErr(Result<T, E>&& r, F f) noexcept {
+  using E2 = std::invoke_result_t<F, E&&>;
 
   if (IsErr(r)) {
     return Result<T, E2>{std::in_place_index<1>, f(UnwrapErr(std::move(r)))};
@@ -112,9 +138,9 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, T> AndThen(
-    const Result<T, E>& r, F f) noexcept {
-  using R = std::invoke_result_t<F, T>;
+  requires std::invocable<F, const T&>
+[[nodiscard]] constexpr auto AndThen(const Result<T, E>& r, F f) noexcept {
+  using R = std::invoke_result_t<F, const T&>;
 
   static_assert(std::variant_size_v<R> == 2,
                 "Return type must be a Result (variant with two types)");
@@ -130,9 +156,9 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, T> AndThen(Result<T, E>&& r,
-                                                           F f) noexcept {
-  using R = std::invoke_result_t<F, T>;
+  requires std::invocable<F, T&&>
+[[nodiscard]] constexpr auto AndThen(Result<T, E>&& r, F f) noexcept {
+  using R = std::invoke_result_t<F, T&&>;
 
   static_assert(std::variant_size_v<R> == 2,
                 "Return type must be a Result (variant with two types)");
@@ -148,9 +174,9 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, E> OrElse(const Result<T, E>& r,
-                                                          F f) noexcept {
-  using R = std::invoke_result_t<F, E>;
+  requires std::invocable<F, const E&>
+[[nodiscard]] constexpr auto OrElse(const Result<T, E>& r, F f) noexcept {
+  using R = std::invoke_result_t<F, const E&>;
 
   static_assert(std::variant_size_v<R> == 2,
                 "Return type must be a Result (variant with two types)");
@@ -165,9 +191,9 @@ template <typename T, typename E, typename F>
 }
 
 template <typename T, typename E, typename F>
-[[nodiscard]] constexpr std::invoke_result_t<F, E> OrElse(Result<T, E>&& r,
-                                                          F f) noexcept {
-  using R = std::invoke_result_t<F, E>;
+  requires std::invocable<F, E&&>
+[[nodiscard]] constexpr auto OrElse(Result<T, E>&& r, F f) noexcept {
+  using R = std::invoke_result_t<F, E&&>;
 
   static_assert(std::variant_size_v<R> == 2,
                 "Return type must be a Result (variant with two types)");
