@@ -1,11 +1,18 @@
 cmake_minimum_required(VERSION 3.20.6)
 project(graphqlcpp)
 
+include(FetchContent)
+FetchContent_Declare(
+  kero_variant_utils
+  GIT_REPOSITORY https://github.com/oneofthezombies/kero-variant-utils.git
+  GIT_TAG v0.1.0)
+FetchContent_MakeAvailable(kero_variant_utils)
+
 add_library(graphqlcpp src/graphql_cpp/error.cc
                        src/graphql_cpp/stream_reader.cc src/graphql_cpp/utf8.cc)
 target_include_directories(graphqlcpp PUBLIC src)
+target_link_libraries(graphqlcpp KeroVariantUtils)
 
-include(FetchContent)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git

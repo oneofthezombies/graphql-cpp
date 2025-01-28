@@ -1,10 +1,11 @@
 #include "graphql_cpp/utf8.h"
 
+#include <kero_variant_utils/kero_variant_utils.h>
+
 #include <optional>
 
 #include "graphql_cpp/error_code.h"
 #include "graphql_cpp/stream_reader.h"
-#include "graphql_cpp/variant_utils.h"
 
 namespace graphql_cpp {
 
@@ -15,7 +16,7 @@ namespace {
 DecodeResult ReadContinuationByte(
     StreamReader& r, std::function<DecodeResult(Byte&&)> f) noexcept {
   return AndThen(r.Read(), [f = std::move(f)](auto&& v) -> DecodeResult {
-    return Visit(
+    return kero::Visit(
         std::move(v),
         [f = std::move(f)](Byte&& b) -> DecodeResult {
           if (IsContinuationByte(b.value)) {
@@ -43,7 +44,7 @@ DecodeResult ReadContinuationByte(
 
 DecodeResult Decode(StreamReader& r) noexcept {
   return AndThen(r.Read(), [&r](StreamReader::Item&& v) -> DecodeResult {
-    return Visit(
+    return kero::Visit(
         std::move(v),
         [&r](Byte&& b) -> DecodeResult { return DecodeFromFirstByte(r, b); },
         [](Eof&&) -> DecodeResult { return std::nullopt; });
