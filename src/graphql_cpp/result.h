@@ -125,28 +125,28 @@ template <typename T, typename E2, typename R, typename F>
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, const T&>
-[[nodiscard]] constexpr auto Map(const Result<T, E>& r, F f) noexcept {
+[[nodiscard]] constexpr auto Map(const Result<T, E>& r, F&& f) noexcept {
   using T2 = std::invoke_result_t<F, const T&>;
   return detail::Map<T2, E>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, T&&>
-[[nodiscard]] constexpr auto Map(Result<T, E>&& r, F f) noexcept {
+[[nodiscard]] constexpr auto Map(Result<T, E>&& r, F&& f) noexcept {
   using T2 = std::invoke_result_t<F, T&&>;
   return detail::Map<T2, E>(std::move(r), std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, const E&>
-[[nodiscard]] constexpr auto MapErr(const Result<T, E>& r, F f) noexcept {
+[[nodiscard]] constexpr auto MapErr(const Result<T, E>& r, F&& f) noexcept {
   using E2 = std::invoke_result_t<F, const E&>;
   return detail::MapErr<T, E2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, E&&>
-[[nodiscard]] constexpr auto MapErr(Result<T, E>&& r, F f) noexcept {
+[[nodiscard]] constexpr auto MapErr(Result<T, E>&& r, F&& f) noexcept {
   using E2 = std::invoke_result_t<F, E&&>;
   return detail::MapErr<T, E2>(std::move(r), std::forward<F>(f));
 }
@@ -175,28 +175,28 @@ template <typename T, typename E, typename R2, typename R, typename F>
 
 template <typename T, typename E, typename F>
   requires AndThenWithConstRef<T, E, F>
-[[nodiscard]] constexpr auto AndThen(const Result<T, E>& r, F f) noexcept {
+[[nodiscard]] constexpr auto AndThen(const Result<T, E>& r, F&& f) noexcept {
   using R2 = std::invoke_result_t<F, const T&>;
   return detail::AndThen<T, E, R2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires AndThenWithMove<T, E, F>
-[[nodiscard]] constexpr auto AndThen(Result<T, E>&& r, F f) noexcept {
+[[nodiscard]] constexpr auto AndThen(Result<T, E>&& r, F&& f) noexcept {
   using R2 = std::invoke_result_t<F, T&&>;
   return detail::AndThen<T, E, R2>(std::move(r), std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires OrElseWithConstRef<T, E, F>
-[[nodiscard]] constexpr auto OrElse(const Result<T, E>& r, F f) noexcept {
+[[nodiscard]] constexpr auto OrElse(const Result<T, E>& r, F&& f) noexcept {
   using R2 = std::invoke_result_t<F, const E&>;
   return detail::OrElse<T, E, R2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires OrElseWithMove<T, E, F>
-[[nodiscard]] constexpr auto OrElse(Result<T, E>&& r, F f) noexcept {
+[[nodiscard]] constexpr auto OrElse(Result<T, E>&& r, F&& f) noexcept {
   using R2 = std::invoke_result_t<F, E&&>;
   return detail::OrElse<T, E, R2>(std::move(r), std::forward<F>(f));
 }
