@@ -5,10 +5,7 @@
       "label": "Build GraphQL C++",
       "type": "process",
       "command": "bash",
-      "args": [
-        "-c",
-        "cmake --build /work/build --config Debug --target all -j $(nproc)"
-      ],
+      "args": ["-c", "cmake --build /work/build --config Debug --target all"],
       "problemMatcher": ["$gcc"]
     },
     {

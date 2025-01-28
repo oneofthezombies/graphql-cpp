@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "donjayamanne.githistory",
+    "esbenp.prettier-vscode",
+    "GraphQL.vscode-graphql-syntax",
+    "ms-azuretools.vscode-docker",
+    "streetsidesoftware.code-spell-checker",
+    "Thinker.sort-json",
+    "usernamehw.errorlens",
+    "ms-vscode.cmake-tools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "twxs.cmake",
+    "cheshirekow.cmake-format",
+    "vadimcn.vscode-lldb",
+    "ms-vscode.cpptools"
+  ]
+}

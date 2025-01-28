@@ -31,7 +31,7 @@ RUN apt update && \
     rm -rf "/var/lib/apt/lists/*" && \
     ln -s "/usr/lib/llvm-18" "/opt/llvm"
 
-ENV CMAKE_VERSION="3.20.6"
+ENV CMAKE_VERSION="3.31.5"
 RUN ARCH="$(uname -m)" && \
     CMAKE_DIR="cmake-$CMAKE_VERSION-linux-$ARCH" && \
     CMAKE_FILENAME="$CMAKE_DIR.tar.gz" && \
