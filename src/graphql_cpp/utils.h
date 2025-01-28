@@ -9,19 +9,10 @@
 namespace graphql_cpp {
 
 template <typename T>
-constexpr bool always_false = false;
-
-template <typename T>
-struct IsEnumClass {
-  static constexpr bool value =
-      std::is_enum_v<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
-};
-
-template <typename T>
-inline constexpr bool is_enum_class_v = IsEnumClass<T>::value;
-
-template <typename T>
-concept EnumClass = is_enum_class_v<T>;
+concept Int32Convertible =
+    std::is_convertible_v<T, std::int32_t> ||
+    (std::is_enum_v<T> &&
+     std::is_same_v<std::underlying_type_t<T>, std::int32_t>);
 
 struct StringHash : public std::hash<std::string_view> {
   using is_transparent = void;
