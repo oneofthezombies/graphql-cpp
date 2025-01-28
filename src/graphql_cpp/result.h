@@ -6,6 +6,40 @@
 
 namespace graphql_cpp {
 
+template <typename R>
+concept ResultVariant = requires { typename std::variant_size<R>; } &&
+                        (std::variant_size_v<R> == 2);
+
+template <typename R, typename T>
+concept ResultVariantWithValue = ResultVariant<R> && requires {
+  requires std::is_same_v<std::variant_alternative_t<0, R>, T>;
+};
+
+template <typename R, typename E>
+concept ResultVariantWithError = ResultVariant<R> && requires {
+  requires std::is_same_v<std::variant_alternative_t<1, R>, E>;
+};
+
+template <typename T, typename E, typename F>
+concept AndThenWithConstRef =
+    std::invocable<F, const T&> &&
+    ResultVariantWithError<std::invoke_result_t<F, const T&>, E>;
+
+template <typename T, typename E, typename F>
+concept AndThenWithMove =
+    std::invocable<F, T&&> &&
+    ResultVariantWithError<std::invoke_result_t<F, T&&>, E>;
+
+template <typename T, typename E, typename F>
+concept OrElseWithConstRef =
+    std::invocable<F, const E&> &&
+    ResultVariantWithValue<std::invoke_result_t<F, const E&>, T>;
+
+template <typename T, typename E, typename F>
+concept OrElseWithMove =
+    std::invocable<F, E&&> &&
+    ResultVariantWithValue<std::invoke_result_t<F, E&&>, T>;
+
 template <typename T, typename E>
 using Result = std::variant<T, E>;
 
@@ -140,56 +174,30 @@ template <typename T, typename E, typename R2, typename R, typename F>
 }  // namespace detail
 
 template <typename T, typename E, typename F>
-  requires std::invocable<F, const T&>
+  requires AndThenWithConstRef<T, E, F>
 [[nodiscard]] constexpr auto AndThen(const Result<T, E>& r, F f) noexcept {
   using R2 = std::invoke_result_t<F, const T&>;
-
-  static_assert(std::variant_size_v<R2> == 2,
-                "Return type must be a Result (variant with two types)");
-  static_assert(
-      std::is_same_v<std::variant_alternative_t<1, R2>, E>,
-      "Second type of return type must be the same as the error type");
-
   return detail::AndThen<T, E, R2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
-  requires std::invocable<F, T&&>
+  requires AndThenWithMove<T, E, F>
 [[nodiscard]] constexpr auto AndThen(Result<T, E>&& r, F f) noexcept {
   using R2 = std::invoke_result_t<F, T&&>;
-
-  static_assert(std::variant_size_v<R2> == 2,
-                "Return type must be a Result (variant with two types)");
-  static_assert(
-      std::is_same_v<std::variant_alternative_t<1, R2>, E>,
-      "Second type of return type must be the same as the error type");
-
   return detail::AndThen<T, E, R2>(std::move(r), std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
-  requires std::invocable<F, const E&>
+  requires OrElseWithConstRef<T, E, F>
 [[nodiscard]] constexpr auto OrElse(const Result<T, E>& r, F f) noexcept {
   using R2 = std::invoke_result_t<F, const E&>;
-
-  static_assert(std::variant_size_v<R2> == 2,
-                "Return type must be a Result (variant with two types)");
-  static_assert(std::is_same_v<std::variant_alternative_t<0, R2>, T>,
-                "First type of return type must be the same as the value type");
-
   return detail::OrElse<T, E, R2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
-  requires std::invocable<F, E&&>
+  requires OrElseWithMove<T, E, F>
 [[nodiscard]] constexpr auto OrElse(Result<T, E>&& r, F f) noexcept {
   using R2 = std::invoke_result_t<F, E&&>;
-
-  static_assert(std::variant_size_v<R2> == 2,
-                "Return type must be a Result (variant with two types)");
-  static_assert(std::is_same_v<std::variant_alternative_t<0, R2>, T>,
-                "First type of return type must be the same as the value type");
-
   return detail::OrElse<T, E, R2>(std::move(r), std::forward<F>(f));
 }
 
