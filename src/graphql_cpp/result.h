@@ -9,32 +9,6 @@ namespace graphql_cpp {
 template <typename T, typename E>
 using Result = std::variant<T, E>;
 
-namespace detail {
-
-template <typename T2, typename E, typename R, typename F>
-[[nodiscard]] constexpr auto Map(R&& r, F&& f) {
-  if (IsOk(r)) {
-    return Result<T2, E>{
-        std::in_place_index<0>,
-        std::invoke(std::forward<F>(f), Unwrap(std::forward<R>(r)))};
-  } else {
-    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(std::forward<R>(r))};
-  }
-}
-
-template <typename T, typename E2, typename R, typename F>
-[[nodiscard]] constexpr auto MapErr(R&& r, F&& f) {
-  if (IsErr(r)) {
-    return Result<T, E2>{
-        std::in_place_index<1>,
-        std::invoke(std::forward<F>(f), UnwrapErr(std::forward<R>(r)))};
-  } else {
-    return Result<T, E2>{std::in_place_index<0>, Unwrap(std::forward<R>(r))};
-  }
-}
-
-}  // namespace detail
-
 template <typename T, typename E>
 [[nodiscard]] constexpr Result<T, E> Ok(const T& v) noexcept {
   return Result<T, E>{std::in_place_index<0>, v};
@@ -89,52 +63,58 @@ template <typename T, typename E>
   return std::get<1>(std::move(r));
 }
 
+namespace detail {
+
+template <typename T2, typename E, typename R, typename F>
+[[nodiscard]] constexpr auto Map(R&& r, F&& f) {
+  if (IsOk(r)) {
+    return Result<T2, E>{
+        std::in_place_index<0>,
+        std::invoke(std::forward<F>(f), Unwrap(std::forward<R>(r)))};
+  } else {
+    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(std::forward<R>(r))};
+  }
+}
+
+template <typename T, typename E2, typename R, typename F>
+[[nodiscard]] constexpr auto MapErr(R&& r, F&& f) {
+  if (IsErr(r)) {
+    return Result<T, E2>{
+        std::in_place_index<1>,
+        std::invoke(std::forward<F>(f), UnwrapErr(std::forward<R>(r)))};
+  } else {
+    return Result<T, E2>{std::in_place_index<0>, Unwrap(std::forward<R>(r))};
+  }
+}
+
+}  // namespace detail
+
 template <typename T, typename E, typename F>
   requires std::invocable<F, const T&>
 [[nodiscard]] constexpr auto Map(const Result<T, E>& r, F f) noexcept {
   using T2 = std::invoke_result_t<F, const T&>;
-
-  if (IsOk(r)) {
-    return Result<T2, E>{std::in_place_index<0>, f(Unwrap(r))};
-  } else {
-    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(r)};
-  }
+  return detail::Map<T2, E>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, T&&>
 [[nodiscard]] constexpr auto Map(Result<T, E>&& r, F f) noexcept {
   using T2 = std::invoke_result_t<F, T&&>;
-
-  if (IsOk(r)) {
-    return Result<T2, E>{std::in_place_index<0>, f(Unwrap(std::move(r)))};
-  } else {
-    return Result<T2, E>{std::in_place_index<1>, UnwrapErr(std::move(r))};
-  }
+  return detail::Map<T2, E>(std::move(r), std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, const E&>
 [[nodiscard]] constexpr auto MapErr(const Result<T, E>& r, F f) noexcept {
   using E2 = std::invoke_result_t<F, const E&>;
-
-  if (IsErr(r)) {
-    return Result<T, E2>{std::in_place_index<1>, f(UnwrapErr(r))};
-  } else {
-    return Result<T, E2>{std::in_place_index<0>, Unwrap(r)};
-  }
+  return detail::MapErr<T, E2>(r, std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
   requires std::invocable<F, E&&>
 [[nodiscard]] constexpr auto MapErr(Result<T, E>&& r, F f) noexcept {
   using E2 = std::invoke_result_t<F, E&&>;
-
-  if (IsErr(r)) {
-    return Result<T, E2>{std::in_place_index<1>, f(UnwrapErr(std::move(r)))};
-  } else {
-    return Result<T, E2>{std::in_place_index<0>, Unwrap(std::move(r))};
-  }
+  return detail::MapErr<T, E2>(std::move(r), std::forward<F>(f));
 }
 
 template <typename T, typename E, typename F>
