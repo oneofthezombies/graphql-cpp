@@ -4,6 +4,7 @@
 
 #include "graphql_cpp/error_code.h"
 #include "graphql_cpp/stream_reader.h"
+#include "graphql_cpp/variant_utils.h"
 
 namespace graphql_cpp {
 
