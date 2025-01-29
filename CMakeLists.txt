@@ -5,13 +5,13 @@ include(FetchContent)
 FetchContent_Declare(
   kero_variant_utils
   GIT_REPOSITORY https://github.com/oneofthezombies/kero-variant-utils.git
-  GIT_TAG v0.1.0)
+  GIT_TAG v0.3.0)
 FetchContent_MakeAvailable(kero_variant_utils)
 
 add_library(graphqlcpp src/graphql_cpp/error.cc
                        src/graphql_cpp/stream_reader.cc src/graphql_cpp/utf8.cc)
 target_include_directories(graphqlcpp PUBLIC src)
-target_link_libraries(graphqlcpp KeroVariantUtils)
+target_include_directories(graphqlcpp PRIVATE ${kero_variant_utils_SOURCE_DIR})
 
 FetchContent_Declare(
   googletest
