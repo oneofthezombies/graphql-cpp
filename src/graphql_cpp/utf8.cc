@@ -1,6 +1,6 @@
 #include "graphql_cpp/utf8.h"
 
-#include <kero_variant_utils/kero_variant_utils.h>
+#include <kero/variant_utils.h>
 
 #include <optional>
 
