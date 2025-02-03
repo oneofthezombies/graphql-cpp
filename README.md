@@ -15,6 +15,7 @@
   ```
 
 - To make adding emoji codes easier, you can use the [Gitmoji CLI](https://github.com/carloscuesta/gitmoji-cli):
+
   ```bash
   gitmoji -c
   ```

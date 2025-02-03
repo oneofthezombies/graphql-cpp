@@ -4,6 +4,6 @@
 
 namespace graphql_cpp {
 
-TEST(LexerTest, AlwaysPasses) { EXPECT_TRUE(true); }
+TEST(Lexer, Basic) { EXPECT_EQ(1, 1); }
 
 }  // namespace graphql_cpp

@@ -8,28 +8,29 @@ RUN apt update && \
     apt install -y \
     curl \
     git \
+    # libstdc++
+    build-essential \
+    # GDB
+    gdb \
     # To open in a browser on the host
     xdg-utils \
-    lsb-release \
     # LLVM
+    lsb-release \
     wget \
     software-properties-common \
     gnupg \
-    && curl -fsSL "https://apt.llvm.org/llvm.sh" | bash -s 18 \
+    && curl -fsSL "https://apt.llvm.org/llvm.sh" | bash -s 19 \
     && apt install -y \
-    clang-18 \
-    clang-format-18 \
-    lldb-18 \
-    lld-18 \
-    libc++-18-dev \
-    libc++abi-18-dev \
+    clang-19 \
+    clang-format-19 \
+    lld-19 \
     # For cmake-format
     pipx \
     # For ninja
     ninja-build \
     && apt clean && \
     rm -rf "/var/lib/apt/lists/*" && \
-    ln -s "/usr/lib/llvm-18" "/opt/llvm"
+    ln -s "/usr/lib/llvm-19" "/opt/llvm"
 
 ENV CMAKE_VERSION="3.31.5"
 RUN ARCH="$(uname -m)" && \
@@ -58,17 +59,16 @@ RUN echo '# JavaScript' >> ~/.bashrc && \
     node@22.13.0 \
     npm@11.0.0 \
     gitmoji-cli@9.5.0 \
-    tsx@4.19.2 \
     && echo '' >> ~/.bashrc
 
 RUN pipx ensurepath && \
     source ~/.bashrc && \
     pipx install \
-    # cmake-format
+    # For cmake-format
     cmakelang==0.6.13
 
 RUN echo '# Aliases' >> ~/.bashrc && \
-    echo 'alias ll="ls -a -p -lh"' >> ~/.bashrc && \
+    echo 'alias ll="ls -alhF --color=auto"' >> ~/.bashrc && \
     echo '' >> ~/.bashrc
 
 WORKDIR /work
