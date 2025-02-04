@@ -3,7 +3,7 @@
 
 #include <expected>
 
-#include "graphql_cpp/source.h"
+#include "graphql_cpp/source_text.h"
 
 namespace graphql_cpp {
 
@@ -15,7 +15,7 @@ enum class TokenKind {
 template <CharIterator Iterator>
 class Lexer {
  public:
-  explicit Lexer(Source<Iterator> source) noexcept : source_(source) {}
+  explicit Lexer(SourceText<Iterator> source) noexcept : source_(source) {}
 
   ~Lexer() noexcept = default;
 
@@ -28,7 +28,7 @@ class Lexer {
   std::expected<TokenKind, ErrorCode> Next() noexcept {}
 
  private:
-  Source<Iterator> source_;
+  SourceText<Iterator> source_;
 };
 
 }  // namespace graphql_cpp

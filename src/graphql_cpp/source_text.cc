@@ -1,4 +1,4 @@
-#include "graphql_cpp/source.h"
+#include "graphql_cpp/source_text.h"
 
 #include <array>
 

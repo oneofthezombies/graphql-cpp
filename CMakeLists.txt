@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(graphql_cpp)
 
-add_library(graphql_cpp src/graphql_cpp/lexer.cc src/graphql_cpp/source.cc)
+add_library(graphql_cpp src/graphql_cpp/source_text.cc src/graphql_cpp/lexer.cc)
 target_include_directories(graphql_cpp PUBLIC src)
 
 if (BUILD_TESTING)
@@ -16,7 +16,7 @@ if (BUILD_TESTING)
 
   add_executable(
     graphql_cpp_test
-    src/graphql_cpp/source_test.cc)
+    src/graphql_cpp/source_text_test.cc)
   target_link_libraries(graphql_cpp_test graphql_cpp GTest::gtest_main
                         GTest::gmock_main stdc++ m)
 

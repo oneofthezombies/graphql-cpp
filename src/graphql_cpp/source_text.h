@@ -1,5 +1,5 @@
-#ifndef GRAPHQL_CPP_SOURCE_H_
-#define GRAPHQL_CPP_SOURCE_H_
+#ifndef GRAPHQL_CPP_SOURCE_TEXT_H_
+#define GRAPHQL_CPP_SOURCE_TEXT_H_
 
 #include <expected>
 #include <iterator>
@@ -71,18 +71,18 @@ enum class ErrorCode {
 };
 
 template <CharIterator Iterator>
-class Source {
+class SourceText {
  public:
-  explicit Source(Iterator begin, Iterator end) noexcept
+  explicit SourceText(Iterator begin, Iterator end) noexcept
       : it_(begin), end_(end) {}
 
-  ~Source() noexcept = default;
+  ~SourceText() noexcept = default;
 
-  Source(const Source&) = delete;
-  Source& operator=(const Source&) = delete;
+  SourceText(const SourceText&) = delete;
+  SourceText& operator=(const SourceText&) = delete;
 
-  Source(Source&&) noexcept = default;
-  Source& operator=(Source&&) noexcept = default;
+  SourceText(SourceText&&) noexcept = default;
+  SourceText& operator=(SourceText&&) noexcept = default;
 
   std::optional<char8_t> PeekByte() const noexcept {
     if (it_ == end_) {
@@ -170,4 +170,4 @@ class Source {
 
 }  // namespace graphql_cpp
 
-#endif  // GRAPHQL_CPP_SOURCE_H_
+#endif  // GRAPHQL_CPP_SOURCE_TEXT_H_
