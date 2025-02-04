@@ -12,10 +12,11 @@ enum class TokenKind {
   kEof,
 };
 
-template <CharIterator Iterator>
+template <CharIterator CharIterator>
 class Lexer {
  public:
-  explicit Lexer(SourceText<Iterator> source) noexcept : source_(source) {}
+  explicit Lexer(SourceText<CharIterator> source_text) noexcept
+      : source_text_(source_text) {}
 
   ~Lexer() noexcept = default;
 
@@ -25,10 +26,55 @@ class Lexer {
   Lexer(Lexer&&) noexcept = default;
   Lexer& operator=(Lexer&&) noexcept = default;
 
-  std::expected<TokenKind, ErrorCode> Next() noexcept {}
+  std::expected<TokenKind, ErrorCode> Next() noexcept {
+    while (true) {
+      auto b0 = source_text_.PeekByte();
+      if (!b0) {
+        return TokenKind::kEof;
+      }
+
+      switch (*b0) {
+        // https://spec.graphql.org/October2021/#sec-White-Space
+        case '\t':
+        case ' ':
+        case ',':  // https://spec.graphql.org/October2021/#sec-Insignificant-Commas
+        {
+          ++column_;
+          source_text_.Advance();
+          continue;
+        }
+        // https://spec.graphql.org/October2021/#sec-Line-Terminators
+        case '\n':
+        case '\r': {
+          ++line_;
+          column_ = 0;
+          source_text_.Advance();
+          if (*b0 == '\r') {
+            auto b1 = source_text_.PeekByte();
+            if (b1 && *b1 == '\n') {
+              source_text_.Advance();
+            }
+          }
+          continue;
+        }
+        // https://spec.graphql.org/October2021/#sec-Comments
+        case '#': {
+          ++column_;
+          source_text_.Advance();
+          // TODO:
+          // https://spec.graphql.org/October2021/#sec-Context-Free-Grammar
+          continue;
+        }
+        default:
+          break;
+      }
+    }
+  }
 
  private:
-  SourceText<Iterator> source_;
+  SourceText<CharIterator> source_text_;
+  std::size_t line_{};
+  std::size_t column_{};
 };
 
 }  // namespace graphql_cpp

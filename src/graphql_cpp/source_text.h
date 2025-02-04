@@ -22,7 +22,7 @@ constexpr char8_t kUtf8MaxSourceCharacterFirst = 0xef;
 constexpr char8_t kUtf8MaxSourceCharacterSecond = 0xbf;
 constexpr char8_t kUtf8MaxSourceCharacterThird = 0xbf;
 
-// Reference: https://spec.graphql.org/October2021/#sec-Language.Source-Text
+// https://spec.graphql.org/October2021/#sec-Language.Source-Text
 constexpr std::array<std::uint8_t, 256> kUtf8SourceCharacterLength = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0,  // 0x00 ~ 0x0f
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0x10 ~ 0x1f
@@ -115,13 +115,9 @@ class SourceText {
     return static_cast<char8_t>(*it_);
   }
 
-  std::optional<char8_t> NextByte() noexcept {
-    auto byte = PeekByte();
-    if (byte) {
-      Advance();
-    }
-
-    return byte;
+  void Advance() noexcept {
+    ++it_;
+    ++position_;
   }
 
   std::expected<std::optional<char32_t>, ErrorCode> NextSourceChar() noexcept {
@@ -181,11 +177,6 @@ class SourceText {
   }
 
  private:
-  void Advance() noexcept {
-    ++it_;
-    ++position_;
-  }
-
   CharIterator it_;
   CharIterator end_;
   std::size_t position_{};
