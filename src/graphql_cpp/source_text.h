@@ -1,6 +1,7 @@
 #ifndef GRAPHQL_CPP_SOURCE_TEXT_H_
 #define GRAPHQL_CPP_SOURCE_TEXT_H_
 
+#include <array>
 #include <expected>
 #include <iterator>
 #include <optional>
@@ -21,7 +22,29 @@ constexpr char8_t kUtf8MaxSourceCharacterFirst = 0xef;
 constexpr char8_t kUtf8MaxSourceCharacterSecond = 0xbf;
 constexpr char8_t kUtf8MaxSourceCharacterThird = 0xbf;
 
-std::uint8_t Utf8SourceCharacterLength(const char8_t b0) noexcept;
+// Reference: https://spec.graphql.org/October2021/#sec-Language.Source-Text
+constexpr std::array<std::uint8_t, 256> kUtf8SourceCharacterLength = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0,  // 0x00 ~ 0x0f
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0x10 ~ 0x1f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x20 ~ 0x2f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x30 ~ 0x3f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x40 ~ 0x4f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x50 ~ 0x5f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x60 ~ 0x6f
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0x70 ~ 0x7f
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0x80 ~ 0x8f
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0x90 ~ 0x9f
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0xa0 ~ 0xaf
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0xb0 ~ 0xbf
+    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // 0xc0 ~ 0xcf
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // 0xd0 ~ 0xdf
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,  // 0xe0 ~ 0xef
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 0xf0 ~ 0xff
+};
+
+constexpr std::uint8_t Utf8SourceCharacterLength(const char8_t b0) noexcept {
+  return kUtf8SourceCharacterLength[b0];
+}
 
 constexpr bool IsUtf8ContinuationByte(const char8_t b) noexcept {
   return (b & kUtf8ContinuationByteMask) == kUtf8ContinuationBytePattern;
