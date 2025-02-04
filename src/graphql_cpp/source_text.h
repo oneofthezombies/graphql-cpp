@@ -70,10 +70,10 @@ enum class ErrorCode {
   kInvalidSource,
 };
 
-template <CharIterator Iterator>
+template <CharIterator CharIterator>
 class SourceText {
  public:
-  explicit SourceText(Iterator begin, Iterator end) noexcept
+  explicit SourceText(CharIterator begin, CharIterator end) noexcept
       : it_(begin), end_(end) {}
 
   ~SourceText() noexcept = default;
@@ -163,8 +163,8 @@ class SourceText {
     ++position_;
   }
 
-  Iterator it_;
-  Iterator end_;
+  CharIterator it_;
+  CharIterator end_;
   std::size_t position_{};
 };
 
