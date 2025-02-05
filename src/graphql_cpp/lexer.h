@@ -47,7 +47,7 @@ class Lexer {
         case '\n':
         case '\r': {
           ++line_;
-          column_ = 0;
+          column_ = 1;
           source_text_.Advance();
           if (*b0 == '\r') {
             auto b1 = source_text_.PeekByte();
@@ -73,8 +73,8 @@ class Lexer {
 
  private:
   SourceText<CharIterator> source_text_;
-  std::size_t line_{};
-  std::size_t column_{};
+  std::size_t line_{1};
+  std::size_t column_{1};
 };
 
 }  // namespace graphql_cpp
